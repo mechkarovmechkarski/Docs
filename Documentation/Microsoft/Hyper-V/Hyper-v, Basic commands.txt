@@ -1,0 +1,27 @@
+**********************Hyper-V 2012R2 Powershell commands**********************
+
+***Get disks on server***
+wmic logicaldisk get caption
+***End***
+
+***Get free and used space on a server logical disk***
+Get-PSDrive C | Select-Object Used,Free
+***End***
+
+***Basic VM management commands***
+Get-VM
+Get-VM –VMname * | Select-Object VMname,AutomaticStartAction
+Stop-VM serverNAME
+Start-VM serverNAME
+Resume-VM serverNAME
+get-vm | Select -ExpandProperty Networkadapters | Select vmname, ipaddresses
+Get-VMHardDiskDrive -VMname serverNAME | fl
+Measure-VMReplication
+Get-VMSnapshot -VMName serverNAME
+***End***
+
+***Resize disk on VM***
+!!!	If the disk is IDE you need to shut down the VM.
+Get-VM -VMName serverNAME | Select-Object VMId | Get-VHD
+Resize-VHD -Path 'C:\VM\fs01\VHD\fs01.vhdx' -SizeBytes 50Gb
+***End resizing***

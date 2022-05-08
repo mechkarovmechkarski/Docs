@@ -1,0 +1,24 @@
+Fix Windows Startmenu:
+	1.	Remove local profile
+	
+	2.	Powershell as administrator
+		Get-AppxPackage -Name Microsoft.Windows.ShellExperienceHost
+		check status: ok
+		
+		Get-AppxPackage -Name Microsoft.Windows.Cortana
+		check status: ok
+		
+		Get-AppXPackage -AllUsers | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register “$($_.InstallLocation)\AppXManifest.xml”}
+		Get-AppXPackage | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
+	3.	Start cmd as administrator
+		sfc /scnannow
+		
+		In case sfc fials to restore:
+		dism /online /cleanup-image /restorehealth
+		
+	4.	Check Application Identity Service
+	
+	5.	Check if Start is running
+		
+			get-process -name shellexperiencehost
+			get-process -name searchui

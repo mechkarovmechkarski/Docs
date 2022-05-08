@@ -1,0 +1,10 @@
+First, you need to unregister the problematic device from Azure AD.
+
+Launch Command Prompt on the computer you want to unregister and run the dsregcmd /leave command.
+Make sure to delete the MS-Organization-Access and MS-Organization-P2P-Access entries from the certificate store.
+Run the dsregcmd /status command, and make sure AzureAdJoined is set to No.
+After that, you need to register the problematic machine using Hybrid Azure AD Join.
+
+dsregcmd /leave
+
+dsregcmd /status

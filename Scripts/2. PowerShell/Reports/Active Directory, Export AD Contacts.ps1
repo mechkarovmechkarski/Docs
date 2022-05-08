@@ -1,0 +1,1 @@
+Get-ADObject -Filter 'objectClass -eq "contact"' -Properties CN,Description -SearchBase 'OU=test,DC=domain,DC=local' | Select CN,Description | Export-Csv c:\contacts.csv -NoTypeInformation

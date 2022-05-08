@@ -1,0 +1,14 @@
+1.	rename software distribution folder
+2.	chkdsk c: /f
+3.	sfc /scannow
+4.	rename croot2
+5.	windows troubleshoot
+6.	DISM.exe /Online /Cleanup-Image /RestoreHealth /Source:C:\RepairSource\Windows /LimitAccess
+7.	Install the latest Stack update. (in case you have few windows updates installed you can try uinstalling them before this step)
+8.	Uninstall all windows updates from control panel or with Powershell:
+		DISM.exe /Online /Remove-Package /PackageName:KBXXXXXX
+		DISM.exe /Online /Remove-Package /PackageName:KBXXXXXX /quiet /norestart
+9.	clean boot: run msconfig
+
+
+run Wureset.bat file

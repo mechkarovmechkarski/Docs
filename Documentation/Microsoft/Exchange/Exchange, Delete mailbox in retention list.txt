@@ -1,0 +1,8 @@
+			How to delete mailbox which is in retention list
+
+1.	Open Exchange Management Shell as Administrator.
+2.	Get-MailboxDatabase
+3.	Get-MailboxStatistics -Database "DatabaseName" | Where-Object {$_.DisconnectDate -Notlike $NULL} | Fo
+rmat-Table DisplayName, DisconnectDate, MailboxGuid, DisconnectReason -Wrap
+4.	Remove-StoreMailbox -Database DatabaseName -Identity "7214d767-0933-48f7-87c9-1c727a4f1548" -MailboxS
+tate Disabled

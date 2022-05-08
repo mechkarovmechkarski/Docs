@@ -1,0 +1,32 @@
+SAN Switch Commands
+
+switchshow
+licenseport --show
+
+portcfgpersistentdisable 3
+portcfgpersistentenable 3
+
+portcfgshow 3
+
+
+---------------------------
+
+Release the license from port 7.
+Note: Before you can re-assign a license, disable and ensure the port is offline and release the license
+
+switch:admin> portdisable <port_number>
+switch:admin> licenseport --release <port_number>
+switch:admin> licenseport --release <range_of_port_numbers>
+
+---------------------------
+
+Step 2: Reserving a port license
+Reserving a license for a port assigns a POD license to that port whether the port is online or offline.
+switch:admin> licenseport --reserve <port_number>
+
+switch:admin> licenseport --reserve <range_of_port_numbers>
+
+Run the portShow command to ensure the port is licensed.
+Enable the port by running the portEnable <portnumber> command.
+
+---------------------------

@@ -1,0 +1,1 @@
+Get-ADUser -Filter * -SearchBase "OU=Users,DC=domain,DC=local" -SearchScope OneLevel -Property Name, Description, LastLogonTimestamp | Select-object -Property Name, Enabled, @{ n = "LastLogonDate"; e = { [datetime]::FromFileTime( $_.lastLogonTimestamp ) } }, Description | Export-Csv -Path C:\users.csv

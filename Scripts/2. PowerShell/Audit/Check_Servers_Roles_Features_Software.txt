@@ -1,0 +1,6 @@
+The verification of installed roles, features and software can be done with following powershell code examples: 
+List installed Operating System Components
+Get-WindowsFeature | Where-Object {$_. installstate -eq "installed"}
+
+List installed Software 
+Get-WmiObject -Class Win32_Product | select Name, Version, @{n='InstallDate';e={([datetime]::ParseExact($_.InstallDate,'yyyyMMdd', $null)).ToString('yyyy-MM-dd')}} | Sort-Object InstallDate 

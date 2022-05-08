@@ -1,0 +1,23 @@
+1. 	Get-HealthReport -Identity exchangeSERVER
+OR
+	Get-HealthReport -Server exchangeSERVER | where {$_.alertvalue -ne "Healthy" â€“and $_.AlertValue â€“ne "Disabled"} 
+
+2.Za report na opredelen Healthset, v sluchai "HubTransport"	
+	Get-ServerHealth exchangeSERVER | ?{$_.HealthSetName -eq "HubTransport"}
+
+3.	Invoke-MonitoringProbe HubTransport\HubAvailabilityProbe -Server exchangeSERVER | Format-List
+Ako ResultType e Success vsichko e Ok
+
+4. 	Za da izvadish greshkata:
+(Get-WinEvent -ComputerName exchangeSERVER -LogName Microsoft-Exchange-ActiveMonitoring/MonitorDefinition | % {[XML]$_.toXml()}).event.userData.eventXml | ? {$_.Name -like "*HubAvailabilityMonitor*"}
+
+
+Additional:
+1. To indicate that you're manually fixing a problem, you use the Set-ServerMonitor cmdlet. For example, if you need to make repairs on a server named 		HSVEX01, you'd run the command:
+
+	Set-ServerMonitor -Server HSVEX01 -Name Maintenance -Repairing $true
+
+	When you're done with the repairs, you'd run Set-ServerMonitor again, setting the -Repairing parameter to $false.
+
+
+

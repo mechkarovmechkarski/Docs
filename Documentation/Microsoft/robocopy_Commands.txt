@@ -1,0 +1,33 @@
+https://adamtheautomator.com/robocopy/
+
+robocopy 
+/L - WhatIf switch. No move action is performed.
+
+Copy files in Source directory without subfolders
+robocopy c:\src c:\dst
+
+This command is the one above, but instead of copy it moves the files. (this will remove all files in the specefied directory)
+
+This command, coppies all files and subfolders. Including NTFS ACLs, file owner, file attributes.
+robocopy c:\src c:\dst /E /COPYALL
+
+This command is the one above, but instead of copy it moves the files. (source folder is deleted after copy)
+robocopy c:\src c:\dst /MOVE
+
+
+
+
+
+
+
+/TEE /LOG+:c:\robolog.log /MIR /zb /w:1 /r:5 /xo /copyall /E
+/TEE /LOG+:c:\robolog.log /MIR /zb /w:1 /r:5 /xo /copyall
+/s /mir
+ROBOCOPY.EXE \\Server\folder\ e:\ *.* /E /Z /MIR /XF ~*.* /R:2 /W:5 /V /BYTES /NC /NS /NDL /NFL /NJH /NP /ETA /TEE /UNILOG:e:\roboopy_log.txt /MT:30
+
+***Export NTFS permissions in Access control list***
+
+icacls "E:\folder" /save C:\ACL_info_file_LNF /T
+icacls "\\folder2" /restore C:\ACL_info_file_LNF
+
+****************************************************

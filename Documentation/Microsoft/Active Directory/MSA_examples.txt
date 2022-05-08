@@ -1,0 +1,7 @@
+New-ADServiceAccount -Name MSA-Veeam –RestrictToSingleComputer
+$Identity = Get-ADComputer -identity server
+Add-ADComputerServiceAccount -Identity $identity -ServiceAccount MSA-veeam
+
+
+Get-ADServiceAccount MSA-VeeamDC01
+Get-ADServiceAccount -Identity MSA-Veeam -Properties PrincipalsAllowedToRetrieveManagedPassword

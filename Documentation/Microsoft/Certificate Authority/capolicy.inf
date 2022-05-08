@@ -1,0 +1,17 @@
+[Version]
+Signature="$Windows NT$"
+
+[certsrv_server]
+RenewalKeyLength=4096
+RenewalValidityPeriod=Years
+RenewalValidityPeriodUnits=20
+CRLPeriod=Year
+CRLPeriodUnits=1
+CRLDeltaPeriod=Weeks
+CRLDeltaPeriodUnits=26
+AlternateSignatureAlgorithm=0
+LoadDefaultTemplates=0
+
+[BasicConstrainsExtensions]
+PathLenth=1
+Critical=Yes

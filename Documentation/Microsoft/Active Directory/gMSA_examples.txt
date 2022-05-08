@@ -1,0 +1,79 @@
+*** Additional info for gMSA
+Add the group managed service account to the „Log on as a batch job“ setting.
+
+Get-ADServiceAccount -filter {name -eq 'gMSA-name'} -prop * | Select Name,DNSHostName,MemberOf,Created,LastLogonDate,PasswordLastSet,msDS-ManagedPasswordInterval,PrincipalAllowedToDelegateToAccount,PrincipalsAllowedToRetrieveManagedPassword,msDS-ManagedPassword,ServicePrincipalNames
+
+************* BUGS *************
+	1. Create this key on Server 2012R2 as workaround on repeated tasks:
+		Key: HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\CredWom\<SID of the gMSA account>
+
+********************************
+Group Managed Service Accounts have the object class “msDS-GroupManagedServiceAccount” and associated attributes specific to GMSAs. These properties include:
+
+msDS-GroupMSAMembership (PrincipalsAllowedToRetrieveManagedPassword) – stores the security principals that can access the GMSA password.
+msds-ManagedPassword – This attribute contains a BLOB with password information for group-managed service accounts.
+msDS-ManagedPasswordId – This constructed attribute contains the key identifier for the current managed password data for a group MSA.
+msDS-ManagedPasswordInterval – This attribute is used to retrieve the number of days before a managed password is automatically changed for a group MSA.
+********************************
+
+
+
+********** Initial - one time setup **********
+Get-KdsrootKey
+Add-KdsRootKey -EffectiveImmediately
+Test-KdsRootKey -KeyID (Get-KdsRootKey).KeyID
+******************************
+
+********** Create gMSA **********
+New-ADServiceAccount -Name gMSA1$ -DNSHostname gMSA.windowspapst.de -ManagedPasswordIntervalInDays 30 -PassThru
+Get-ADServiceAccount -Identity gMSA1$ -Properties *
+*** harden the account
+Set-ADServiceAccount -Identity gMSA1 -KerberosEncryptionType “AES128, AES256” -PrincipalsAllowedToRetrieveManagedPassword “DC1$”,”DC2$” -PassThru
+Get-ADServiceAccount -Identity gMSA1 -Properties msDS-GroupMsaMembership | Select -Expand msDS-GroupMsaMembership | Select -Expand Access | Select -Expand IdentityReference
+******************************
+
+********** Install gMSA on required Servers **********
+*** Prerequisites are:
+Install-WindowsFeature -Name 'RSAT-AD-PowerShell'
+Import-Module ActiveDirectory
+*** Proceed with the installation
+Install-ADServiceAccount -Identity gMSA1
+Test-AdServiceAccount -Identity gMSA1
+******************************
+
+********** List Computer Accounts who has access *********
+Get-ADServiceAccount -Identity gMSA1 -Properties msDS-GroupMsaMembership | Select -Expand msDS-GroupMsaMembership | Select -Expand Access | Select -Expand IdentityReference
+Get-ADServiceAccount -Identity gMSA1 -Properties PrincipalsAllowedToRetrieveManagedPassword
+******************************
+
+********** Set Computer Accounts access *********
+Get-ADServiceAccount -Identity gMSA1 | Set-ADServiceAccount -PrincipalsAllowedToRetrieveManagedPassword 'srv1$', 'srv2$'
+******************************
+
+********** Uninstall gMSA ***********
+*** First remove the account from all computers where it is installed
+Uninstall-ADServiceAccount -Identity gMSA1
+*** Then follow steps below to cancel the assignments
+Set-ADServiceAccount gMSA1 -PrincipalsAllowedToRetrieveManagedPassword $NULL -PassThru
+Test-ADServiceAccount gMSA1$
+
+*** Then you are asked in which groups the gMSA account is a member
+$ADGroups = (Get-ADServiceAccount -Identity gMSA1$ -Properties MemberOf).MemberOf
+$ADGroups | Get-ADGroup | Select-Object Name
+
+*** and then removes the gMSA account from all groups
+Remove-ADPrincipalGroupMembership gMSA1$ -MemberOf $ADGroups
+
+*** Finally, the gMSA account is deleted from the Active Directory.
+Remove-ADServiceAccount -Identity gMSA1
+Get-ADServiceAccount -Identity gMSA1
+******************************
+
+********** Reconfigure Task Schedule with gMSA ***********
+$taskCheck = get-scheduledtask -TaskName "TEST"
+$taskPrincipal = New-ScheduledTaskPrincipal -UserID "domain\gMSA$" -LogonType Password -RunLevel Highest
+$taskPrincipal = New-ScheduledTaskPrincipal -UserID "domain\gMSA$" -LogonType Password -RunLevel Limited
+Set-ScheduledTask -TaskName $taskCheck.TaskName -TaskPath $taskCheck.TaskPath -Principal $taskPrincipal
+******************************
+
+

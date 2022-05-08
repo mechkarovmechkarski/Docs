@@ -1,0 +1,40 @@
+How to migrate DHCP to Windows Server 2019
+
+1. Start the PowerShell console as Administrator and run the following command:
+
+Add-WindowsFeature -IncludeManagementTools DHCP
+
+The -IncludeManagementTools parameter must be specified to install the DHCP server management console. By default, Add-WindowsFeature installs the DHCP server role without the appropriate console.
+
+
+2. Add-DhcpServerSecurityGroup
+
+
+3. Restart-Service DHCPServer
+
+
+4. Authorize the new DHCP server in AD domain:
+
+Add-DhcpServerInDC  host1.contoso.com  192.168.10.35
+
+
+5. From old server we need to export all DHCP configurations with PowerShell: 
+
+Export-DhcpServer -ComputerName "dhcpserver.contoso.com" -File "C:\exportdir\dhcpexport.xml"
+
+
+6. Import the configurations to the new server:
+
+Import-DhcpServer -ComputerName "dhcpserver.contoso.com" -File "C:\exports\dhcpexport.xml" -BackupPath "C:\dhcpbackup\"
+
+
+7. Check if server is Authorized and unauthorize the old one
+
+
+8. Stop & Disable DHCP service on old server
+
+Stop-Service -Name DHCPServer
+Set-Service -Name DHCPServer -StartupType Disabled
+
+
+9. If DNS Server also changed, reconfigure Scope's DNS options

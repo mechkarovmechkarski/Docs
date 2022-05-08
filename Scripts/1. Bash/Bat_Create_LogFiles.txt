@@ -1,0 +1,46 @@
+Create logs for bat files
+*************
+***   Way 1
+*************
+
+@echo off
+setlocal EnableExtensions DisableDelayedExpansion
+rem Check the file size of log file and move it if its more than 200 MiB.
+call :CheckLogSize "D:\files\listpdf.log" 209715200
+
+rem Other commands which append lines to log file.
+
+endlocal
+goto :EOF
+
+rem The subroutine CheckLogSize must be called with two parameters: the log
+rem file name without or with path as first parameter and the maximum file
+rem size as second parameter.
+
+rem Note: Windows command processor supports only 32 bit signed integers
+rem which limits file size comparison to 2 GiB, i.e. 2147483647 bytes.
+rem Therefore the second parameter should not be too large. It must be
+rem made sure that the current file size of the log file is not exceeding
+rem 2 GiB value on calling this subroutine. So better call this subroutine
+rem once too often than once too rare.
+
+:CheckLogSize
+if not exist "%~1" goto :EOF
+if %~z1 GTR %~2 move /Y "%~1" "%~dpn1_old%~x1" >nul
+goto :EOF
+
+
+*************
+***   Way 2
+*************
+
+:CheckLogSize
+if not exist "%~1" goto :EOF
+if %~z1 LEQ %~2 goto :EOF
+for /F "tokens=2 delims==." %%I in ('%SystemRoot%\System32\wbem\wmic.exe OS GET LocalDateTime /VALUE') do set "FileNameDate=%%I"
+set "FileNameDate=%FileNameDate:~0,4%-%FileNameDate:~4,2%-%FileNameDate:~6,2%_%FileNameDate:~8,2%-%FileNameDate:~10,2%"
+move /Y "%~1" "%~dpn1_%FileNameDate%%~x1" >nul
+set "MaxFiles=%~3"
+if not defined MaxFiles set "MaxFiles=5"
+for /F "skip=%MaxFiles% eol=| delims=" %%I in ('dir "%~dpn1_????-??-??_??-??%~x1" /A-D-R-H /B /O-N 2^>nul') do del "%~dp1%%I"
+goto :EOF

@@ -1,0 +1,5 @@
+1. Изваждане на логове при изпратени и получени писма. Записване във файл.
+
+	Get-MessageTrackingLog -Start (get-date).addhours(-2) -End (get-date).addhours(-1) | fl timestamp,eventid,recipients,messagesubject,sender,directionality | Out-File -FilePath "c:\temp\ExchangeMailflowLogs.txt"
+
+

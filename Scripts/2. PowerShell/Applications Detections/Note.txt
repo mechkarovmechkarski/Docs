@@ -1,0 +1,5 @@
+Get-WmiObject -Class Win32_Product | select Name, Version,@{n='InstallDate';e={([datetime]::ParseExact($_.InstallDate,'yyyyMMdd',$null)).ToString('yyyy-MM-dd')}} | Sort-Object InstallDate
+
+$app = Get-WmiObject -Class Win32_Product -Filter “Name = ‘7-Zip 18.05 (x64 edition)'”
+
+$app.Uninstall()

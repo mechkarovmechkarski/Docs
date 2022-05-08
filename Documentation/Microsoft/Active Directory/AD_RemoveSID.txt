@@ -1,0 +1,3 @@
+Get-ADUser -Identity <account> -Properties SidHistory | Select-Object -ExpandProperty SIDHistory
+Set-ADUser -Identity <account> -Remove @{SIDHistory='S-1-5-21-...'}
+

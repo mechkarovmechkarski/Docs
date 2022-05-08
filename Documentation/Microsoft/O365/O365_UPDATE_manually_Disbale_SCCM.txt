@@ -1,0 +1,4 @@
+Browse to -> HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Office\ClickToRun\Configuration\OfficeMgmtCOM=TRUE
+Change OfficeMgmtCOM
+From TRUE -> FALSE
+Open Word and update now should work.

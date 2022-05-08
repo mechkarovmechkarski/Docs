@@ -1,0 +1,14 @@
+setup.exe /download configuration.xml
+
+setup.exe /configure configuration.xml
+
+detection registry
+Software\Microsoft\Office\ClickToRun\Configuration
+VersionToReport
+version
+greater than or equal
+16.0.11328.20492
+
+requirements
+os > win 10 > 2012 r2 > 2016 > 2019
+device > intune o365 proplus management > value > equals > true

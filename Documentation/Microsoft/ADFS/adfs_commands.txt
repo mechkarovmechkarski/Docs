@@ -1,0 +1,3 @@
+ADFS commands
+Get-clustergroup
+Move-clustergroup "cluster group"

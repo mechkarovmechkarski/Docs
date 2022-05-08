@@ -1,0 +1,14 @@
+add-mailboxfolderpermission -identity "conference.room@domain.bg:\calendar" -user user.test@domain.bg -AccessRights PublishingEditor
+
+1.	To grant read/write permissions on a person's calendar to another individual:
+
+add-mailboxfolderpermission -identity "username:\calendar" -user otherusername -AccessRights PublishingEditor
+
+
+2.	To grant read-only (reviewer) permissions on a person's calendar to another individual:
+
+add-mailboxfolderpermission -identity "username:\calendar" -user otherusername -AccessRights Reviewer
+
+3.	To remove a user's permission from a calendar:
+
+remove-mailboxfolderpermission -identity "username:\calendar" -user otherusername

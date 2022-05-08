@@ -1,0 +1,11 @@
+This was achieved by creating a registry binary key called
+"Scancode Map" 
+in HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layout.
+
+The next step was to modify its data, which I did by typing this:
+
+00 00 00 00 00 00 00 00
+02 00 00 00 34 00 53 00
+00 00 00 00
+
+After rebooting, the NumPad dot acted as an ordinary dot.

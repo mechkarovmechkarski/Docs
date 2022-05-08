@@ -1,0 +1,24 @@
+DFS commands
+************** Data deduplication **************
+
+Get-DedupJob
+Start-DedupJob D: -Type GarbageCollection -full
+Start-DedupJob F: -Type Optimization
+Get-DedupStatus | fl
+
+**************
+
+Get-DfsReplicationGroup
+Sync-DfsReplicationGroup -GroupName "RG01" -SourceComputerName "SRV01" -DestinationComputerName "SRV02" -DurationInMinutes 5 -Verbose
+
+Get-DfsrMembership
+
+**************
+https://docs.microsoft.com/en-us/windows-server/troubleshoot/how-to-determine-the-minimum-staging-area-dfsr-needs-for-a-replicated-folder
+
+$big32 = Get-ChildItem c:\\temp -recurse | Sort-Object length -descending | select-object -first 32 | measure-object -property length –sum
+$big32.sum /1gb
+
+Get-ChildItem c:\\temp -recurse | Sort-Object length -descending | select-object -first 32 | ft name,length -wrap –auto
+
+**************

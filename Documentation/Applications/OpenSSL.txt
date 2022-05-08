@@ -1,0 +1,15 @@
+Create PFX file with private key, public key, intermediate certificates and root key
+
+openssl pkcs12 -export -out OutputFile.pfx -inkey private.key -in chain.crt
+
+******
+
+openssl s_client -connect IP:443 -tls1_2
+openssl s_client -connect IP:443 -tls1_1
+openssl s_client -connect IP:443 -tls1
+
+# Test TLS 1.2 to server on port 
+openssl s_client -connect server:443 -tls1_2
+
+# Create PFX file from private and public keys of a certificate WITH public key certificates for intermediate and root CA.
+openssl pkcs12 -export -out OutputFile.pfx -inkey private.key -in chain.crt

@@ -1,0 +1,4 @@
+CCMSetup.exe /mp:SCCMSERVER.DOMAIN.bg SMSSITECODE=BUL SMSMP=SCCMSERVER.DOMAIN.bg DNSSUFFIX=domain.bg
+
+
+CCMSetup.exe /uninstall

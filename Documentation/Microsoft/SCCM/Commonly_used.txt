@@ -1,0 +1,6 @@
+SCCM Logs location
+Client: C:\Windows\CCM\logs
+Server: C:\Program Files\Microsoft Configuration Manager\Logs
+Management point: C:\SMS_CCM\Logs
+Configuration Manager console: C:\Program Files (x86)\Microsoft Endpoint Manager\AdminConsole\AdminUILog
+IIS: C:\inetpub\logs\logfiles\w3svc1

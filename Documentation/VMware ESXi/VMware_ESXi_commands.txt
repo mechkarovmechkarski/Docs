@@ -1,0 +1,15 @@
+######################################
+####	VMware ESXi commands	######
+######################################
+https://www.altaro.com/vmware/top-20-esxcli-commands/
+https://www.nakivo.com/blog/most-useful-esxcli-esxi-shell-commands-vmware-environment/?_sm_au_=iVVjFV7w9NNWNpNFRHkc7KsJp2fCp
+
+# Register Virtual Machine
+vim-cmd solo/registervm  /vmfs/volumes/5f27bf50-bf3d19c7-a5ca-ac162d725388/VM_Folder/VirtualMachine.vmx 
+
+# backup ESXi configuration
+vim-cmd hostsvc/firmware/sync_config
+vim-cmd hostsvc/firmware/backup_config
+
+
+chkconfig --list

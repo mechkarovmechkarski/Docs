@@ -1,0 +1,22 @@
+### Check SMB Connections
+Get-SMBConnection
+
+# Get 1.0 connections
+Get-SMBConnection | Where-Object {$_.Dialect -lt 2.0} | Select-Object -Property Dialect
+Get-SMBConnection | Where-Object {$_.Dialect -lt 2.0} | Select-Object -Property Dialect | foreach { $_.Dialect }
+
+
+
+$smbstate = Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol | Select-Object -Property State
+if($smbstate.State -eq "Enabled"){
+    Get-SMBConnection | Where-Object {$_.Dialect -gt 2.0} | Select-Object -Property Dialect | foreach { $_.Dialect }
+}
+else{
+    Write-Output "Not Enabled"
+}
+
+
+			WSUS Cleanup:
+				Run on Powershell As Administrator:
+			Get-WsusServer -Name bgsofsccm01 -PortNumber 8530
+			Get-WsusServer | Invoke-WsusServerCleanup –CleanupObsoleteUpdates

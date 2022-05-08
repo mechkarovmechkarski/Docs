@@ -1,0 +1,12 @@
+### Get an available domain controller in the current domain using discovery
+Get-ADDomainController -Discover
+
+### List DC information
+Get-ADDomainController
+
+### Find only writable DCs
+netdom query dc
+
+
+### Check if computer is communicating with DC
+Test-ComputerSecureChannel

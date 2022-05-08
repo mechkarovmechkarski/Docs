@@ -1,0 +1,22 @@
+Fix Windows Event ID Errors
+
+******************************************
+Fix Event ID 1008
+*********************
+
+https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc774913(v=ws.10)?redirectedfrom=MSDN
+
+cmd as administrator
+cd %SYSTEMROOT%\System32
+Lodctr /q
+C:\Windows\system32\lodctr.exe /R
+C:\Windows\SysWOW64\lodctr.exe /R
+C:\Windows\System32\wbem\winmgmt.exe /RESYNCPERF
+C:\Windows\SysWOW64\wbem\winmgmt.exe /RESYNCPERF
+reboot
+If Event ID 2003 shows up run:
+cd %SYSTEMROOT%\System32
+lodctr /T:TermService
+reboot
+
+******************************************

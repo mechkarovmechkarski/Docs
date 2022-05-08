@@ -1,0 +1,17 @@
+Download ISO with Media Creation Tool
+Mount the ISO file and copy Sources\install.esd
+Open CMD as Administrator
+CD to the directory where install.esd is located.
+Run command:
+dism /Get-WimInfo /WimFile:install.esd
+
+Then remember the number of index you like, update the command and run it:
+Compress  arguments: "max" "fast" "none" "recovery"
+
+dism /export-image /SourceImageFile:install.esd /SourceIndex:6 /DestinationImageFile:install.wim /Compress:max /CheckIntegrity
+
+
+
+https://systemcenterdudes.com/sccm-windows-10-deployment/
+https://systemcenterdudes.com/sccm-windows-10-build-and-capture-task-sequence/
+

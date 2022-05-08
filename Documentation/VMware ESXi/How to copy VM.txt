@@ -1,0 +1,51 @@
+Guide for VMWARE ESXi how to copy VM
+
+1. Log to VMWARE ESXi host
+
+2. Go to Storage -> SATA-DataStore-01 (or other) -> Datastore browser -> Create directory (with the name of the new VM, for example new_VM_name)
+
+3. Copy *.vmdk & *.vmx files from template_folder to new_VM_name folder
+
+4. Open SSH connection to the VMWARE ESXi host
+username: domain\domain_account
+
+	4.1.	(If connection refused error!) Go to VMWARE ESXi host GUI -> Host -> Manage -> Services -> Start TSM-SSH service
+
+5.SSH commands to the ESXi host:
+	5.1.	cd vmfs/volumes/SATA-DataStore-01/new_VM
+
+	5.2.	vmkfstools -E "old_VM_name.vmdk" "new_VM_name.vmdk"
+
+	5.3.	cp "old_VM_name.vmx" "new_VM_name.vmx"
+
+	5.4.	vi "new_VM_name.vmx"
+		to edit press: 'a'
+		to save and quit press: 'esc' and then: ':wq'
+
+	5.5.	Within the configuration file, modify all old instances of the virtual machine's file names to the new file names. At a minimum, modify these values (more may exist):
+
+		nvram = " newname.nvram"
+		displayName = " newname "
+		extendedConfigFile = " newname .vmxf"
+		scsi0:0.fileName = " newname .vmdk"
+		[...]
+		migrate.hostlog = "./ newname -UUID.hlog"
+
+		Repeat this process for each virtual machine disk. For example:
+
+		scsi0:1.fileName = " newname _1.vmdk"
+		scsi0:2.fileName = " newname _2.vmdk"
+
+		Correct the VMkernel swap file reference.
+
+		For example:
+
+		sched.swap.derivedName = "/vmfs/volumes/DatastoreUUID/ newname/ newname-UUID.vswp
+
+		Note: Ensure that you rename both the .vswp file and the directory name for the swap file in bold.
+
+6. Delete old *.vmx file
+
+7. Register *.vmx with right click the *.vmx file from GUI -> Register VM
+
+8. It asks did you MOVED or COPIED the machine. Select that you COPIED it.

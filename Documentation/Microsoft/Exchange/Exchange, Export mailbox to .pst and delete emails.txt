@@ -1,0 +1,101 @@
+--------------------------------------------------------------------------
+-------------How to export emails [older than...] to pst file-------------
+--------------------------------------------------------------------------
+
+0.	Преди да започнем и преди да се отвори Exchange Shell-a задължително да се сменят регионалните настройки!!!
+	0.1. Change regional settings format to UK (на някои места казват en-US)
+	0.2. Start circular logging
+	0.3. Restart MS Exchange Information Store
+	
+1.	Open Exchange shell as administrator
+
+2.	Get-MailboxDatabase "Mailbox Name" | Get-MailBoxStatistics | Sort totalitemsize -desc | ft displayname, totalitemsize
+
+3.	Проверяваш, има ли отворени request-и с командата:
+
+Get-MailboxExportRequest | fl *
+
+	3.1.	Ако даде грешка, че не намира CMDLET-а - създаваме нова ролева група, където -Roles са ролите на групата (да може да експортва и импортва), а -Members са потребители и Security групи, които ще бъдат добавени в ролевата група(в случая го правим с Enterprise admins, тоест трябва да членуваш в нея за да правиш експорти):
+
+New-RoleGroup -Name "Mailbox export and import" -Roles "Mailbox Import Export" -Members "Enterprise Admins"
+
+	3.2.	Рестартираме Exchange shell-a като администратор
+	
+	3.3.	Създаваш споделена папка и даваш права до нея на SYSTEM (write and read) и до Exchange Trusted Subsystem (write and read), включително и NTFS права.
+	
+4.	Създаваш Export-а
+За експорт на писма по-стари от:
+New-MailboxExportRequest -ContentFilter {(Received -lt ‘01/01/2017’)} -Mailbox user.test -FilePath ”\\exchangeSERVER\ExportedMailboxes\user_test_2017.pst”
+
+За експорт на цялата пощенска кутия:
+New-MailboxExportRequest -Mailbox user.test -FilePath ”\\exchangeSERVER\ExportedMailboxes\user_test_2017.pst”
+
+5.	Следиш състоянието на експорта
+
+Get-MailboxExportRequest | fl *
+
+6.	Изтриваш си Request-a
+
+Remove-MailboxExportRequest -Identity "има го при върнатия резултат от предходната команда"
+
+или може по този начин
+
+Get-MailboxExportRequest -Status Completed | Remove-MailboxExportRequest
+
+7.	ВАЖНО! Преди да трием писма, спираме нотификациите за непрочетени съобщения
+
+	7.1.	Влизаме в Exchange ECP 
+		Mail Flow > Rules > New Rule > +: Create a new rule... > More options... > The message property includes the message type: read receipt
+		
+	7.2.	Вече можем да изтрием писмата с единична команда или със скрипт (скрипта би бил полезен, когато ще трием над 10 000 писма)
+			Може да използваме вместо -DeleteContent , -EstimateResultOnly за да видим резултата от търсенето.
+			
+-Identity е потребителя; -SearchQuery e филтъра, който има първа част - дата (за писма по-стари) и втора част - имейли (ако се пропусне ще изтрие календарни събития и други неща с по-стара дата)
+Search-Mailbox -Identity user.test -SearchQuery ‘Received<=”26/09/2019” AND kind:email’ -DeleteContent
+
+Скрипт - ефективен при изтриване на повече от 10 000 съобщения. 
+ВАЖНО! Промени датата във скрипта!
+
+--------------------------------------------------------------------------
+
+param(
+    # Get name used to get-mailbox
+    [Parameter(Mandatory=$True,Position=0)]
+    [ValidateNotNull()]
+    [string]$name
+)
+
+Write-host "This script deletes only emails in the mailbox."
+Write-host "Check the date in the script and change it manually!!!"
+$confirmation = Read-Host "Do you want to continue? [y/n]"
+
+while($confirmation -ne "y")
+{
+    if ($confirmation -eq 'n') {exit}
+    $confirmation = Read-Host "Do you want to continue? [y/n]"
+}
+
+$mailbox_name = get-mailbox $name
+
+Do {
+    $result = Search-Mailbox -Identity $mailbox_name.Identity -SearchQuery ‘Received<=”01/01/2017” AND kind:email’ -DeleteContent -force -WarningAction Silentlycontinue
+    
+   write-host $result.resultitemscount -ForegroundColor Green
+   Write-host $result.resultitemssize 
+   
+    } Until ($result.resultitemscount -eq 0)
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+
+8.	Връщаме регионалните настройки, спираме Circular logging-a и рестартираме MS Exchange Information Store
+
+
+
+
+
+
+
+
+КРАЙ

@@ -1,0 +1,8 @@
+####	Get Applied GPO for user
+gpresult /Scope User /v
+###########
+
+#### Check port connectivity with PowerShell ####
+tnc <Server> -port <PortNumber>
+###########
+

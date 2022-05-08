@@ -1,0 +1,1 @@
+wmic product get /format:csv > Software_%Computername%.csv

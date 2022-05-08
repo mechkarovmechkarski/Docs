@@ -1,0 +1,16 @@
+--Check sys.master_files in master
+USE master
+GO
+SELECT DataFileName = mf.name, 
+       FileSizeMB  = mf.size*8/1024
+FROM sys.master_files AS mf
+WHERE mf.database_id = db_id('tempdb')
+ORDER BY mf.type, file_id;
+GO
+--Check sys.database_files in tempdb
+USE tempdb
+GO
+SELECT DataFileName = dbf.name, 
+       FileSizeMB  = dbf.size*8/1024
+FROM sys.database_files AS dbf
+ORDER BY dbf.type, dbf.file_id;

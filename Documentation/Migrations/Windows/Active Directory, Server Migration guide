@@ -1,0 +1,50 @@
+Add secondary domain controler to an existing domain
+
+1. Install OS MS Windows Server with latest updates
+
+2. Change regional setings, time, date
+
+3. Change computer name and add the server to the domain
+
+4. Open Server Manager -> Manage -> Add Roles and Features -> Server Roles: Active Directory Domain Services add it 
+
+5.(May not be required) If you have to raise functional levels:
+
+From Active Directory Users and Computers right-click the domain node and then click Raise Domain Functional Level. 
+From Active Directory Domains and Trusts, and then click Raise Forest Functional Level
+
+6.(May not be required) If you have to change SYSVOL Replication method from File Replication Service (FRS) to Distributed File System Replication (DFSR):
+
+dfsrmig /getglobalstate
+Type dfsrmig /getmigrationstate to confirm all domain controllers have reached prepared state
+dfsrmig /setglobalstate 2
+Type dfsrmig /getmigrationstate to confirm all domain controllers have reached redirected state
+dfsrmig /setglobalstate 3
+Type dfsrmig /getmigrationstate to confirm all domain controllers have reached eliminated state
+At last type net share command to chech Share names NETLOGON and SYSVOL C:\Windows\SYSVOL_DFSR\...
+
+Also make sure in each domain controller FRS service is stopped and disabled. (Service name=ntFrs)
+Get-Service ntfrs | select name, status, starttype
+
+Check the service status and starttype by entering remote PS session on all DC.
+Enter-PSsession -ComputerName localhost
+Get-Service ntfrs | select name, status, starttype
+
+7. Now we need to promote our new server to DC in our existing Domain.
+7.1. Select Add a domain controller to an existing domain -> Next
+7.2. Specify DNS Server, Global Catalog and DSRM password -> Next
+7.3. Restart the computer after promoting to DC
+
+8. Open cmd as administrator and type 'dcdiag' to check health status
+
+9. Open cmd as administrator and type 'repadmin /replsum' to check replication status
+
+10.(Only if you migrate DC) Open cmd as administrator
+10.1. Type 'netdom query fsmo' to check Active Directory Domain Controler roles
+10.2. If you have roles assigned to the old DC you need to migrate them before removing it out of the domain. On the new DC, open as administrator and type cmd > ntdsutil >roles> connections > connect to server dc2019.random.com 
+server connections : q for existing credentials.
+10.3. Each role is transfered seperatedly with the following commands:
+'Transfer infrastructure master', 'Transfer naming master', 'Transfer PDC', 'Transfer RID master', 'Transfer Schema master'
+10.4. To check if the migration of roles is successful type again 'netdom query fsmo'
+
+

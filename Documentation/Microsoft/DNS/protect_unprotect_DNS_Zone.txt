@@ -1,0 +1,39 @@
+Protect DNS Zones
+
+#### OPTITIONAL ####
+#### Check protection before making changes ####
+Get-ADobject -Server "<DomainControllerFQDN>" -Filter {objectclass -eq "DNSZone"} -Properties name,protectedfromaccidentaldeletion | Where-Object {$_.protectedfromaccidentaldeletion -eq "True"}
+Get-ADobject -Server "<DomainController_fqdn>" -Filter {objectclass -eq "DNSZone"} -SearchBase "DC=DomainDNSZones,DC=sofia,DC=domain,DC=bg" -Properties name,protectedfromaccidentaldeletion | Where-Object {$_.protectedfromaccidentaldeletion -eq "True"}
+Get-ADobject -Server "<DomainController_fqdn>" -Filter {objectclass -eq "DNSZone"} -SearchBase "DC=ForestDNSZones,DC=sofia,DC=domain,DC=bg" -Properties name,protectedfromaccidentaldeletion | Where-Object {$_.protectedfromaccidentaldeletion -eq "True"}
+#####################################################
+
+#### The DNS zone should be protected as follows ####
+Get-ADobject -Server "<DomainControllerFQDN>" -Filter {objectclass -eq "DNSZone"} | Set-ADObject -ProtectedFromAccidentalDeletion $true
+Get-ADobject -Server "<DomainController_fqdn>" -Filter {objectclass -eq "DNSZone"} -SearchBase "DC=DomainDNSZones,DC=sofia,DC=domain,DC=bg" | Set-ADObject -ProtectedFromAccidentalDeletion $true
+Get-ADobject -Server "<DomainController_fqdn>" -Filter {objectclass -eq "DNSZone"} -SearchBase "DC=ForestDNSZones,DC=sofia,DC=domain,DC=bg" | Set-ADObject -ProtectedFromAccidentalDeletion $true
+#####################################################
+
+#### OPTITIONAL ####
+#### Check protection after making changes ####
+Get-ADobject -Server "<DomainControllerFQDN>" -Filter {objectclass -eq "DNSZone"} -Properties name,protectedfromaccidentaldeletion | Where-Object {$_.protectedfromaccidentaldeletion -eq "True"}
+Get-ADobject -Server "<DomainController_fqdn>" -Filter {objectclass -eq "DNSZone"} -SearchBase "DC=DomainDNSZones,DC=sofia,DC=domain,DC=bg" -Properties name,protectedfromaccidentaldeletion | Where-Object {$_.protectedfromaccidentaldeletion -eq "True"}
+Get-ADobject -Server "<DomainController_fqdn>" -Filter {objectclass -eq "DNSZone"} -SearchBase "DC=ForestDNSZones,DC=sofia,DC=domain,DC=bg" -Properties name,protectedfromaccidentaldeletion | Where-Object {$_.protectedfromaccidentaldeletion -eq "True"}
+#####################################################
+
+
+
+Unprotect DNS Zones
+
+#### To delete DNS zone first make it Deletable ####
+#### First get all zones to see where is located the one you are looking
+$SearchedZone = "*_msd*"
+Get-ADobject -Server "<DomainControllerFQDN>" -Filter {(objectclass -eq "DNSZone") -and (name -like $SearchedZone)}
+Get-ADobject -Server "<DomainController_fqdn>" -Filter {(objectclass -eq "DNSZone") -and (name -like $SearchedZone)} -SearchBase "DC=DomainDNSZones,DC=sofia,DC=domain,DC=bg"
+Get-ADobject -Server "<DomainController_fqdn>" -Filter {(objectclass -eq "DNSZone") -and (name -like $SearchedZone)} -SearchBase "DC=ForestDNSZones,DC=sofia,DC=domain
+,DC=bg"
+
+#### Then run change command depending from zone location ####
+Get-ADobject -Server "<DomainControllerFQDN>" -Filter {(objectclass -eq "DNSZone") -and (name -like $SearchedZone)} | Set-ADObject -ProtectedFromAccidentalDeletion $false
+Get-ADobject -Server "<DomainController_fqdn>" -Filter {(objectclass -eq "DNSZone") -and (name -like $SearchedZone)} -SearchBase "DC=DomainDNSZones,DC=sofia,DC=domain,DC=bg" | Set-ADObject -ProtectedFromAccidentalDeletion $false
+Get-ADobject -Server "<DomainController_fqdn>" -Filter {(objectclass -eq "DNSZone") -and (name -like $SearchedZone)} -SearchBase "DC=ForestDNSZones,DC=sofia,DC=domain,DC=bg" | Set-ADObject -ProtectedFromAccidentalDeletion $false
+#####################################################

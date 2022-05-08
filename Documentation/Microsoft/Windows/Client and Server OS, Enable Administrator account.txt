@@ -1,0 +1,8 @@
+1.boot computer from windows 10 installation media
+2.after you see the setup screen pres SHIFT+F10
+3.copy of the utilman.exe file, and then replace utilman.exe with cmd.exe:
+		copy d:\windows\system32\utilman.exe d:\
+		copy /y d:\windows\system32\cmd.exe d:\windows\system32\utilman.exe
+4.Type 'wpeutil reboot'
+5.Select "use of access" after the computer reboots - this will open cmd
+6.net user Administrator /active:yes

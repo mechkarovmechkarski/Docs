@@ -1,0 +1,8 @@
+******* How to set Read Permissions on LAPS passwords
+1.	Create Security group in AD
+2.	Run Powershell on DC as Administrator
+Import-Module AdmPwd.PS
+Find-AdmPwdExtendedRights –Identity “OU=Workstations,OU=SOMEOU,DC=domain,DC=bg”
+
+set-AdmPwdReadPasswordPermission -OrgUnit “OU=Workstations,OU=SOMEOU,DC=domain,DC=bg” -AllowedPrincipals "domain\SEC_2_LapsReadPasswords"
+set-AdmPwdReadPasswordPermission -OrgUnit “OU=Workstations,OU=SOMEOU,DC=domain,DC=bg” -AllowedPrincipals "domain\SEC_0_LapsReadPasswords"
